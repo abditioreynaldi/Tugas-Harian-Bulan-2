@@ -1,8 +1,3 @@
-```text
-================================================================================
-JAWABAN TUGAS GIT, CONVENTIONAL COMMITS, DAN WEB DEVELOPMENT
-================================================================================
-
 1. PENYEBAB & SKENARIO MERGE CONFLICT
 --------------------------------------------------------------------------------
 Merge Conflict terjadi ketika Git tidak dapat menggabungkan perubahan antar-branch 
