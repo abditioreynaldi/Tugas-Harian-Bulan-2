@@ -201,3 +201,27 @@ console.log("-----------------------------------------");
  *    - TANPA kurung: `subtotal + pajak * 0.9` -> 100000 + (11000 * 0.9) = 109.900 (hanya pajak yang terdiskon).
  *    Tanda kurung sangat krusial untuk memastikan seluruh komponen biaya dijumlahkan sebelum dikalikan faktor pengurang.
  */
+
+// ====================================================================
+// Pernyataan tambahan: Konversi menit ke jam
+// ====================================================================
+
+console.log("\n=== KONVERSI MENIT KE JAM ===");
+
+const totalMenit = 250;
+
+// Operator pembagian (/) dengan Math.floor() untuk mengambil bilangan jam utuh
+const jumlahJam = Math.floor(totalMenit / 60);
+
+// Operator modulo (%) untuk mengambil sisa menit yang tidak genap 1 jam
+const sisaMenit = totalMenit % 60;
+
+console.log(totalMenit + " menit = " + jumlahJam + " jam " + sisaMenit + " menit");
+
+/*
+ * PENJELASAN PERAN / DAN % PADA KONVERSI MENIT KE JAM:
+ * 1. Operator pembagian `/` berfungsi membagi 250 dengan 60 (menghasilkan desimal 4.1666...),
+ *    lalu `Math.floor()` membulatkannya ke bawah menjadi 4 untuk mendapatkan jam penuh.
+ * 2. Operator modulo `%` berfungsi menghitung sisa pembagian (250 % 60 = 10),
+ *    yaitu menit yang tersisa setelah diambil 4 jam (4 * 60 = 240 menit).
+ */
