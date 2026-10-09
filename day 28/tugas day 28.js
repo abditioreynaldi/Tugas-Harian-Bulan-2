@@ -122,3 +122,82 @@ console.log(totalPesanan, uangPas, jumlahMember, dapatDiskon);
  *    Pada contoh dapatDiskon, karena pembeli sudah member (true) meskipun belanja belum di atas 100.000 (false),
  *    menggunakan `||` menghasilkan true, sedangkan jika menggunakan `&&` hasilnya akan false.
  */
+
+// ====================================================================
+// LANGKAH 3: BIKIN KASIR SENDIRI 
+// ====================================================================
+
+console.log("\n=== LANGKAH 3: KASIR WARUNG SENDIRI ===");
+
+// 1. Variabel const untuk identitas barang dan tarif pajak
+const NAMA_BARANG = "Nasi Goreng Spesial";
+const HARGA_SATUAN = 25000;
+const TARIF_PAJAK = 0.11; // PPN 11%
+
+// 2. Variabel let untuk transaksi kasir
+let jumlahBeli = 4;
+let uangDibayar = 120000;
+
+// 3. Menghitung subtotal, pajak, dan total bayar dengan tanda kurung ()
+let subtotal = HARGA_SATUAN * jumlahBeli; // 25000 * 4 = 100000
+let pajak = subtotal * TARIF_PAJAK;      // 100000 * 0.11 = 11000
+let totalBayar = subtotal + pajak;       // 111000
+
+// 4. Menggunakan minimal 2 operator penugasan ringkas (-= dan +=)
+const POTONGAN_PROMO = 5000;             // Potongan promo voucher warung
+const BIAYA_KEMASAN = 2000;              // Biaya kotak ramah lingkungan
+
+totalBayar -= POTONGAN_PROMO;            // Operator -= (111000 - 5000 = 106000)
+totalBayar += BIAYA_KEMASAN;             // Operator += (106000 + 2000 = 108000)
+
+// 5. Menghitung kembalian uang pelanggan
+let kembalian = uangDibayar - totalBayar; // 120000 - 108000 = 12000
+
+// 6. Menggunakan modulo (%) untuk mengecek apakah jumlah beli genap
+let jumlahGenap = (jumlahBeli % 2 === 0);
+
+// 7. Membuat 3 variabel Boolean dengan operator perbandingan & logika
+let uangCukup = uangDibayar >= totalBayar;
+let gratisEsTeh = (subtotal >= 100000) && jumlahGenap; // Syarat: Belanja min 100rb DAN beli porsi genap
+let dapatBonusStiker = (jumlahBeli >= 5) || (totalBayar > 100000); // Syarat: Beli min 5 ATAU total > 100rb
+
+// 8. Menampilkan struk kasir dengan format yang rapi di console
+console.log("-----------------------------------------");
+console.log("           WARUNG MAKAN SEDAP            ");
+console.log("-----------------------------------------");
+console.log("Barang          : " + NAMA_BARANG);
+console.log("Harga Satuan    : Rp " + HARGA_SATUAN);
+console.log("Jumlah Beli     : " + jumlahBeli + " porsi");
+console.log("Subtotal        : Rp " + subtotal);
+console.log("Pajak (11%)     : Rp " + pajak);
+console.log("Diskon Promo    : -Rp " + POTONGAN_PROMO);
+console.log("Biaya Kemasan   : +Rp " + BIAYA_KEMASAN);
+console.log("-----------------------------------------");
+console.log("Total Bayar     : Rp " + totalBayar);
+console.log("Uang Dibayar    : Rp " + uangDibayar);
+console.log("Kembalian       : Rp " + kembalian);
+console.log("-----------------------------------------");
+console.log("Uang cukup?     : " + uangCukup);
+console.log("Jumlah genap?   : " + jumlahGenap);
+console.log("Gratis Es Teh?  : " + gratisEsTeh);
+console.log("Dapat Stiker?   : " + dapatBonusStiker);
+console.log("-----------------------------------------");
+
+/*
+ * JAWABAN PERTANYAAN LANGKAH 3:
+ * 1. Penjelasan variabel Boolean gratisEsTeh:
+ *    Variabel `gratisEsTeh` mengecek apakah pembeli berhak mendapat es teh gratis dengan dua syarat:
+ *    subtotal harus minimal Rp 100.000 DAN jumlah beli harus bilangan genap.
+ *    Hasilnya saat ini adalah `true`, karena subtotal mencapai Rp 100.000 (true) dan jumlah beli adalah 4 yang merupakan genap (true).
+ * 
+ * 2. Mengubah operator logika pada gratisEsTeh:
+ *    Jika diubah dari `&&` menjadi `||` pada kondisi `(subtotal >= 100000) || jumlahGenap`:
+ *    - Sebelum diubah (&&): hasilnya true hanya jika KEDUA syarat terpenuhi. Jika beli 3 porsi (subtotal 75rb), hasilnya false.
+ *    - Sesudah diubah (||): hasilnya tetap true cukup jika SALAH SATU syarat terpenuhi (misal subtotal cukup walau ganjil, atau porsi genap walau di bawah 100rb).
+ * 
+ * 3. Contoh tanda kurung () mengubah hasil perhitungan kasir:
+ *    Misalkan perhitungan total sebelum diskon persentase:
+ *    - DENGAN kurung: `(subtotal + pajak) * 0.9` -> (100000 + 11000) * 0.9 = 99.900 (pajak ikut dihitung sebelum diskon).
+ *    - TANPA kurung: `subtotal + pajak * 0.9` -> 100000 + (11000 * 0.9) = 109.900 (hanya pajak yang terdiskon).
+ *    Tanda kurung sangat krusial untuk memastikan seluruh komponen biaya dijumlahkan sebelum dikalikan faktor pengurang.
+ */
