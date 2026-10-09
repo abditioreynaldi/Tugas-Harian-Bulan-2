@@ -70,3 +70,55 @@ console.log(10 > 5 && 3 > 8);
  *    menjadi number 5 sebelum membandingkan. Sedangkan operator === mengecek nilai dan tipe data,
  *    sehingga tipe number (5) dan tipe string ("5") dianggap tidak sama.
  */
+
+// ====================================================================
+// LANGKAH 2: PERBAIKI 4 KESALAHAN 
+// ====================================================================
+
+console.log("\n=== LANGKAH 2: PERBAIKI 4 KESALAHAN ===");
+
+const hargaKopi = 18000;
+const hargaTeh = 7500;
+let jumlahMember = 5;
+let sudahMember = true;
+let uangDiterima = 51000; // FIX 2: Diubah dari tipe string "51000" menjadi number 51000 agar konsisten dengan tipe totalPesanan
+
+// Total 2 kopi + 2 teh. Seharusnya: 51000
+// FIX 1: Gunakan tanda kurung (hargaKopi + hargaTeh) * 2 agar kedua item dikali 2,
+// sebelumnya hanya hargaTeh yang dikali 2 sehingga totalnya salah menjadi 33000.
+let totalPesanan = (hargaKopi + hargaTeh) * 2;
+
+// Uang diterima sama persis dengan total? Seharusnya: true
+// FIX 2 (lanjutan): Gunakan strict equality (===) untuk memastikan nilai dan tipe datanya sama persis.
+let uangPas = uangDiterima === totalPesanan;
+
+// Tambah 1 member baru. Seharusnya jumlahMember jadi 6
+// FIX 3: Tambahkan operator penugasan += 1 (atau jumlahMember++),
+// sebelumnya hanya ekspresi 'jumlahMember + 1' tanpa menyimpan hasilnya kembali ke variabel.
+jumlahMember += 1;
+
+// Dapat diskon jika sudah member ATAU total lebih dari 100000. Seharusnya: true
+// FIX 4: Ganti operator AND (&&) menjadi operator OR (||) sesuai syarat 'sudah member ATAU total > 100000'.
+let dapatDiskon = sudahMember || totalPesanan > 100000;
+
+// Output yang diharapkan: 51000 true 6 true
+console.log(totalPesanan, uangPas, jumlahMember, dapatDiskon);
+
+/*
+ * JAWABAN PERTANYAAN LANGKAH 2:
+ * 1. Rangkuman 4 kesalahan dan solusinya:
+ *    - Kesalahan 1: Pada totalPesanan, perkalian hanya mengalikan hargaTeh; solusinya tambahkan kurung `(hargaKopi + hargaTeh) * 2`.
+ *    - Kesalahan 2: Pada uangPas, uangDiterima bertipe string "51000"; solusinya ubah menjadi tipe number `51000` (atau gunakan `Number(uangDiterima) === totalPesanan`).
+ *    - Kesalahan 3: Pada penambahan member, tidak ada penugasan nilai kembali; solusinya pakai operator `jumlahMember += 1`.
+ *    - Kesalahan 4: Pada dapatDiskon, operator yang dipakai adalah `&&` (dan); solusinya ganti dengan `||` (atau).
+ * 
+ * 2. Kenapa jika `==` diganti `===` pada uangPas aslinya bernilai false?
+ *    Karena variabel uangDiterima bertipe data String ("51000"), sedangkan totalPesanan bertipe Number (51000).
+ *    Operator === tidak mengonversi tipe data, sehingga tipe string tidak sama dengan tipe number.
+ *    Agar bernilai true, ubah variabel menjadi number `uangDiterima = 51000` atau gunakan `Number(uangDiterima) === totalPesanan`.
+ * 
+ * 3. Perbedaan && (AND) dan || (OR):
+ *    Operator `&&` memerlukan semua kondisi bernilai true untuk menghasilkan true, sedangkan `||` cukup salah satu kondisi saja yang true.
+ *    Pada contoh dapatDiskon, karena pembeli sudah member (true) meskipun belanja belum di atas 100.000 (false),
+ *    menggunakan `||` menghasilkan true, sedangkan jika menggunakan `&&` hasilnya akan false.
+ */
