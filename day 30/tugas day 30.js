@@ -251,3 +251,211 @@ console.log(diskon, potonganMember, totalAkhir);
  *      langsung melompat dan mengeksekusi blok 'else'.
  * ------------------------------------------------------------------------------
  */
+
+// ==============================================================================
+// LANGKAH 3: BIKIN KASIR SENDIRI (35 Poin)
+// ==============================================================================
+
+console.log("\n==================================================");
+console.log("        LANGKAH 3: BIKIN KASIR SENDIRI            ");
+console.log("==================================================");
+
+// Syarat 1: Data awal disimpan dengan let / const yang tepat
+const kasirNamaPelanggan = "Rina";
+const kasirTotalBelanja = 90000;
+const kasirHari = "sabtu";
+const kasirJenisMember = "silver";
+const kasirKodeVoucher = "SENJA10";
+const kasirUangBayar = 100000;
+
+// Syarat 2: Diskon berdasarkan total belanja memakai if...else if...else
+let kasirPersenDiskon = 0;
+let kasirDiskon = 0;
+
+if (kasirTotalBelanja >= 100000) {
+  kasirPersenDiskon = 15;
+  kasirDiskon = kasirTotalBelanja * 0.15;
+} else if (kasirTotalBelanja >= 50000) {
+  kasirPersenDiskon = 10;
+  kasirDiskon = kasirTotalBelanja * 0.1;
+} else if (kasirTotalBelanja >= 25000) {
+  kasirPersenDiskon = 5;
+  kasirDiskon = kasirTotalBelanja * 0.05;
+} else {
+  kasirPersenDiskon = 0;
+  kasirDiskon = 0;
+}
+
+// Syarat 3: Potongan member ("gold" 5000, "silver" 2000, selain itu 0)
+let kasirPotonganMember = 0;
+if (kasirJenisMember === "gold") {
+  kasirPotonganMember = 5000;
+} else if (kasirJenisMember === "silver") {
+  kasirPotonganMember = 2000;
+} else {
+  kasirPotonganMember = 0;
+}
+
+// Syarat 4: Promo hari memakai switch ("jumat" 3000, "sabtu" & "minggu" digabung tanpa break 5000, selain itu 0)
+let kasirPromoHari = 0;
+switch (kasirHari) {
+  case "jumat":
+    kasirPromoHari = 3000;
+    break;
+  case "sabtu":
+  case "minggu":
+    // Kedua case digabung tanpa break untuk memanfaatkan fall-through yang disengaja
+    kasirPromoHari = 5000;
+    break;
+  default:
+    kasirPromoHari = 0;
+    break;
+}
+
+// Syarat 5: Validasi nama memakai Truthy/Falsy
+if (kasirNamaPelanggan) {
+  console.log(`Pelanggan: ${kasirNamaPelanggan}`);
+} else {
+  console.log("Nama pelanggan belum diisi");
+}
+
+// Syarat 6: Voucher memakai Truthy/Falsy
+let kasirPotonganVoucher = 0;
+if (kasirKodeVoucher) {
+  kasirPotonganVoucher = 2000;
+  console.log(`Voucher dipakai: ${kasirKodeVoucher} (Potongan Rp 2.000)`);
+} else {
+  kasirPotonganVoucher = 0;
+  console.log("Voucher tidak dipakai");
+}
+
+// Syarat 7: Total akhir belanja
+const kasirTotalAkhir =
+  kasirTotalBelanja - kasirDiskon - kasirPotonganMember - kasirPromoHari - kasirPotonganVoucher;
+
+// Syarat 8: Status pembayaran memakai if...else if...else
+let kasirStatusBayar = "";
+if (kasirUangBayar > kasirTotalAkhir) {
+  const kembalian = kasirUangBayar - kasirTotalAkhir;
+  kasirStatusBayar = `Lunas (Kembalian: Rp ${kembalian.toLocaleString("id-ID")})`;
+} else if (kasirUangBayar === kasirTotalAkhir) {
+  kasirStatusBayar = "Lunas (uang pas)";
+} else {
+  const kekurangan = kasirTotalAkhir - kasirUangBayar;
+  kasirStatusBayar = `Kurang (Kekurangan: Rp ${kekurangan.toLocaleString("id-ID")})`;
+}
+
+// Syarat 9: Cetak dengan template literal rapi
+console.log(`
+========================================
+       STRUK PEMBAYARAN KASIR
+========================================
+Total Belanja   : Rp ${kasirTotalBelanja.toLocaleString("id-ID")}
+Diskon Belanja  : Rp ${kasirDiskon.toLocaleString("id-ID")} (${kasirPersenDiskon}%)
+Potongan Member : Rp ${kasirPotonganMember.toLocaleString("id-ID")} (${kasirJenisMember || "Non-member"})
+Promo Hari      : Rp ${kasirPromoHari.toLocaleString("id-ID")} (${kasirHari})
+Potongan Voucher: Rp ${kasirPotonganVoucher.toLocaleString("id-ID")}
+----------------------------------------
+Total Akhir     : Rp ${kasirTotalAkhir.toLocaleString("id-ID")}
+Uang Bayar      : Rp ${kasirUangBayar.toLocaleString("id-ID")}
+Status          : ${kasirStatusBayar}
+========================================
+`);
+
+// Syarat 10: Uji 3 Skenario Lengkap
+/*
+ * ------------------------------------------------------------------------------
+ * DOKUMENTASI UJI 3 SKENARIO KASIR:
+ * ------------------------------------------------------------------------------
+ *
+ * SKENARIO 1 (Diskon 10%, Hari Akhir Pekan, Bayar Lebih):
+ * - Input : nama "Rina", belanja 90000, hari "sabtu", member "silver", voucher "SENJA10", bayar 100000
+ * - Hasil Output:
+ *   Pelanggan: Rina
+ *   Voucher dipakai: SENJA10 (Potongan Rp 2.000)
+ *   Total Belanja   : Rp 90.000
+ *   Diskon Belanja  : Rp 9.000 (10%)
+ *   Potongan Member : Rp 2.000 (silver)
+ *   Promo Hari      : Rp 5.000 (sabtu)
+ *   Potongan Voucher: Rp 2.000
+ *   Total Akhir     : Rp 72.000
+ *   Uang Bayar      : Rp 100.000
+ *   Status          : Lunas (Kembalian: Rp 28.000)
+ *
+ * SKENARIO 2 (Diskon 15%, Hari Jumat, Nama Kosong, Voucher Kosong, Bayar Pas):
+ * - Input : nama "", belanja 120000, hari "jumat", member "gold", voucher "", bayar 94000
+ * - Hasil Output:
+ *   Nama pelanggan belum diisi
+ *   Voucher tidak dipakai
+ *   Total Belanja   : Rp 120.000
+ *   Diskon Belanja  : Rp 18.000 (15%)
+ *   Potongan Member : Rp 5.000 (gold)
+ *   Promo Hari      : Rp 3.000 (jumat)
+ *   Potongan Voucher: Rp 0
+ *   Total Akhir     : Rp 94.000
+ *   Uang Bayar      : Rp 94.000
+ *   Status          : Lunas (uang pas)
+ *
+ * SKENARIO 3 (Diskon 5%, Hari Kerja/Default, Member Umum, Bayar Kurang):
+ * - Input : nama "Budi", belanja 40000, hari "senin", member "umum", voucher "HEMAT2K", bayar 30000
+ * - Hasil Output:
+ *   Pelanggan: Budi
+ *   Voucher dipakai: HEMAT2K (Potongan Rp 2.000)
+ *   Total Belanja   : Rp 40.000
+ *   Diskon Belanja  : Rp 2.000 (5%)
+ *   Potongan Member : Rp 0 (umum)
+ *   Promo Hari      : Rp 0 (senin)
+ *   Potongan Voucher: Rp 2.000
+ *   Total Akhir     : Rp 36.000
+ *   Uang Bayar      : Rp 30.000
+ *   Status          : Kurang (Kekurangan: Rp 6.000)
+ * ------------------------------------------------------------------------------
+ */
+
+/*
+ * ------------------------------------------------------------------------------
+ * JAWABAN PERTANYAAN LANGKAH 3:
+ * ------------------------------------------------------------------------------
+ * 1. Kenapa urutan else if pada diskon dimulai dari angka terbesar? Apa yang terjadi jika dibalik?
+ *    Jawaban:
+ *    - Karena operator '>=' mencakup seluruh rentang nilai di atasnya.
+ *      Jika dibalik (dimulai dari '>= 25000'), maka belanja 150000 akan langsung bernilai true
+ *      pada kondisi 25000 dan mendapatkan diskon 5% saja. Kondisi 100000 (15%) yang berada
+ *      di bawahnya tidak akan pernah tercapai (menjadi dead code).
+ *      Dengan memulai dari ambang terbesar (100000), nilai 100000 ke atas tersaring dulu,
+ *      kemudian nilai 50000 - 99999 tersaring berikutnya, lalu 25000 - 49999.
+ *
+ * 2. Kenapa promo hari lebih cocok memakai switch, bukan if...else if?
+ *    Jawaban:
+ *    - 'switch' dirancang khusus untuk membandingkan SATU VARIABEL TUNGGAL terhadap
+ *      banyak kemungkinan nilai pasti (discrete equality check), seperti nama hari
+ *      ("jumat", "sabtu", "minggu"). Kodenya jauh lebih bersih, tidak perlu mengulang
+ *      penulisan nama variabel berulang kali ('hari === "jumat" || hari === "sabtu"'),
+ *      dan sangat efisien untuk menggabungkan beberapa case sekaligus.
+ *
+ * 3. Pada switch promo hari, di mana kamu sengaja tidak menulis break, dan kenapa hasilnya tetap benar?
+ *    Jawaban:
+ *    - Sengaja tidak menulis 'break' di antara 'case "sabtu":' dan 'case "minggu":'.
+ *    - Hasilnya tetap benar karena kedua hari tersebut memiliki besaran promo yang SAMA (Rp 5.000).
+ *      Ketika nilai hari adalah "sabtu", JavaScript masuk ke case "sabtu" lalu secara sengaja
+ *      meluncur (fall-through) ke case "minggu" untuk menetapkan potongan 5000, baru kemudian
+ *      berhenti pada 'break' di akhir case "minggu".
+ *
+ * 4. Sebutkan 3 nilai yang membuat if (namaPelanggan) bernilai false.
+ *    Jawaban:
+ *    1) String kosong: "" (atau '')
+ *    2) Nilai null: null
+ *    3) Nilai undefined: undefined (misalnya variabel belum diisi nilai)
+ *
+ * 5. Jika jumlah beli bernilai -1, apa hasil if (jumlahBeli) dan if (jumlahBeli > 0)? Kenapa berbeda?
+ *    Jawaban:
+ *    - Hasil 'if (jumlahBeli)'      -> Bernilai TRUE (masuk ke dalam if).
+ *    - Hasil 'if (jumlahBeli > 0)'  -> Bernilai FALSE (-1 > 0 bernilai false).
+ *    - Alasan kenapa berbeda:
+ *      'if (jumlahBeli)' mengevaluasi Truthy/Falsy bawaan JavaScript.
+ *      Dalam aturan JavaScript, SATU-SATUNYA angka yang bernilai Falsy adalah 0, -0, dan NaN.
+ *      Semua angka selain nol (termasuk angka negatif seperti -1, -50) adalah TRUTHY!
+ *      Sedangkan 'if (jumlahBeli > 0)' adalah ekspresi perbandingan matematika murni,
+ *      di mana -1 lebih kecil dari 0 sehingga bernilai false.
+ * ------------------------------------------------------------------------------
+ */
