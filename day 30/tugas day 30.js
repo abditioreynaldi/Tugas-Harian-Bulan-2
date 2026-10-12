@@ -459,3 +459,61 @@ Status          : ${kasirStatusBayar}
  *      di mana -1 lebih kecil dari 0 sehingga bernilai false.
  * ------------------------------------------------------------------------------
  */
+
+// ==============================================================================
+// PENENTU JUMLAH HARI DALAM BULAN
+// ==============================================================================
+
+console.log("==================================================");
+console.log("    BONUS (+5 POIN): JUMLAH HARI DALAM BULAN      ");
+console.log("==================================================");
+
+let angkaBulan = 2; // Contoh uji: bulan Februari (bisa diubah 1 - 12)
+
+switch (angkaBulan) {
+  // Bulan dengan 30 hari: April (4), Juni (6), September (9), November (11)
+  case 4:
+  case 6:
+  case 9:
+  case 11:
+    console.log(`Bulan ${angkaBulan}: 30 hari`);
+    break;
+
+  // Bulan Februari: 28 atau 29 hari
+  case 2:
+    console.log(`Bulan ${angkaBulan}: 28 atau 29 hari (tergantung tahun kabisat)`);
+    break;
+
+  // Bulan dengan 31 hari: Januari (1), Maret (3), Mei (5), Juli (7), Agustus (8), Oktober (10), Desember (12)
+  case 1:
+  case 3:
+  case 5:
+  case 7:
+  case 8:
+  case 10:
+  case 12:
+    console.log(`Bulan ${angkaBulan}: 31 hari`);
+    break;
+
+  // Angka di luar 1 - 12
+  default:
+    console.log("Bulan tidak valid");
+    break;
+}
+
+/*
+ * ------------------------------------------------------------------------------
+ * PENJELASAN PERNYATAAN BONUS:
+ * Kenapa bisa menggabungkan beberapa case tanpa break di antaranya?
+ * Jawaban:
+ * Di JavaScript, jika suatu 'case' tidak memiliki pernyataan 'break', mesin JavaScript
+ * akan melakukan 'fall-through' (meluncur ke bawah) dan terus mengeksekusi case berikutnya
+ * tanpa memeriksa kecocokan nilai lagi sampai ia menjumpai kata kunci 'break' atau mencapai
+ * akhir blok switch.
+ * Karena bulan 4, 6, 9, dan 11 semuanya memiliki hasil yang identik yaitu 30 hari,
+ * kita dapat menumpuk keempat case tersebut secara berurutan dan hanya menaruh satu
+ * baris kode aksi serta satu 'break' di case terakhir (case 11).
+ * Hal ini adalah teknik resmi (pattern) dalam switch-case yang membuat kode jauh lebih
+ * ringkas, elegan, dan terhindar dari duplikasi kode (DRY - Don't Repeat Yourself).
+ * ------------------------------------------------------------------------------
+ */
