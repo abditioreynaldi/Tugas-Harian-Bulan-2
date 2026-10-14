@@ -344,3 +344,86 @@ kasirCetakStruk(skenario2Keranjang, "Skenario 2 (Belanja Sedang - Diskon 10%)");
  * Pajak   : Rp 6.187,5 (11% dari Rp 56.250)
  * Total   : Rp 62.437,5
  */
+
+/*
+ * ==============================================================================
+ * JAWABAN PERTANYAAN LANGKAH 3
+ * ==============================================================================
+ * 1. Pembuktian Array Method Mengubah Array Asli:
+ *    Saya memilih method `push`. Method ini mengubah array aslinya secara langsung (mutating).
+ *    Contoh bukti:
+ *    let contoh = ["A", "B"];
+ *    console.log("Sebelum push:", contoh); // ["A", "B"]
+ *    contoh.push("C");
+ *    console.log("Setelah push:", contoh); // ["A", "B", "C"] (panjang dan isi array asli bertambah)
+ *
+ * 2. Beda splice dan slice beserta contoh dari kode sendiri:
+ *    - `splice` memotong/mengubah isi array aslinya secara permanen.
+ *      Contoh di kode: `kasirKeranjang.splice(1, 1, "Roti Bakar")` menghapus item lama di indeks 1 dan menyisipkan "Roti Bakar".
+ *    - `slice` TIDAK mengubah array aslinya, melainkan menyalin potongan elemen menjadi array baru.
+ *      Contoh di kode: `kasirKeranjang.slice(0, 3)` menyalin 3 item pertama tanpa mengubah susunan kasirKeranjang.
+ *
+ * 3. Kenapa kasirCariHarga memakai return, bukan console.log?
+ *    Jawab: `kasirCariHarga` harus mengembalikan nilai numerik harga agar bisa diolah dan dijumlahkan oleh fungsi
+ *    pemanggilnya (`kasirHitungSubtotal`). Jika menggunakan console.log, fungsi akan mengembalikan undefined,
+ *    sehingga proses penjumlahan `subtotal += undefined` akan menghasilkan `NaN` (Not-a-Number).
+ *
+ * 4. Perbedaan Parameter dan Argumen:
+ *    - Parameter adalah variabel penampung yang didefinisikan pada deklarasi fungsi, contohnya: `namaMenu` pada `function kasirCariHarga(namaMenu)`.
+ *    - Argumen adalah nilai nyata/aktual yang dikirimkan saat fungsi dipanggil, contohnya: `"Kopi Susu"` pada pemanggilan `kasirCariHarga("Kopi Susu")`.
+ *
+ * 5. Kenapa kasirHitungPajak boleh dipanggil dengan satu maupun dua argumen?
+ *    Jawab: Karena parameter kedua memiliki nilai default (`tarif = 0.11`). Saat dipanggil dengan 1 argumen
+ *    (misal `kasirHitungPajak(100000)`), JavaScript otomatis mengisi nilai tarif dengan 0.11. Namun jika dipanggil
+ *    dengan 2 argumen (misal `kasirHitungPajak(100000, 0.10)`), nilai default akan ditimpa oleh argumen kedua.
+ *
+ * 6. Eksperimen Pemanggilan Sebelum Pendefinisian (Hoisting):
+ *    - Function declaration `kasirCariHarga` mengalami hoisting penuh sehingga bisa dipanggil sebelum baris deklarasi:
+ *      console.log(kasirCariHarga("Es Teh")); // Berhasil mencetak 7500!
+ *    - Function expression `kasirHitungSubtotal` yang disimpan pada variabel `const` TIDAK dapat dipanggil sebelum baris inisialisasinya:
+ *      // console.log(kasirHitungSubtotal(["Es Teh"]));
+ *      // PESAN ERROR JIKA DIAKTIFKAN:
+ *      // ReferenceError: Cannot access 'kasirHitungSubtotal' before initialization
+ */
+
+// ==============================================================================
+// BONUS (+5 POIN): PEMBATALAN ITEM
+// ==============================================================================
+console.log("\n==================================================");
+console.log("        BONUS (+5 POIN): PEMBATALAN ITEM          ");
+console.log("==================================================");
+
+function kasirBatalkanItem(namaMenu) {
+  const posisi = kasirKeranjang.indexOf(namaMenu);
+  if (posisi !== -1) {
+    kasirKeranjang.splice(posisi, 1);
+    return true; // Berhasil dihapus
+  }
+  return false; // Menu tidak ditemukan
+}
+
+console.log("Isi keranjang awal:", kasirKeranjang);
+
+// Panggilan 1: Menu yang ada di keranjang ("Roti Bakar")
+const hasilBatal1 = kasirBatalkanItem("Roti Bakar");
+console.log("Membatalkan 'Roti Bakar' (ada di keranjang):", hasilBatal1);
+console.log("Isi keranjang setelah pembatalan:", kasirKeranjang);
+
+// Panggilan 2: Menu yang TIDAK ada di keranjang ("Pizza")
+const hasilBatal2 = kasirBatalkanItem("Pizza");
+console.log("Membatalkan 'Pizza' (tidak ada di keranjang):", hasilBatal2);
+
+/*
+ * ==============================================================================
+ * DOKUMENTASI HASIL PEMANGGILAN BONUS
+ * ==============================================================================
+ * Panggilan 1 ("Roti Bakar"):
+ * - Posisi ditemukan pada indeks 1.
+ * - Berhasil dihapus menggunakan splice(posisi, 1).
+ * - Fungsi mengembalikan nilai: true.
+ *
+ * Panggilan 2 ("Pizza"):
+ * - Posisi tidak ditemukan (indexOf bernilai -1).
+ * - Tidak ada item yang dihapus.
+ * - Fungsi mengembalikan nilai: false.
+ */
