@@ -134,3 +134,70 @@ console.log(cekAngka(5));
  * (push -> unshift -> pop -> shift -> splice), karena pergeseran indeks akibat unshift dan splice harus
  * dihitung cermat agar tidak salah menentukan hasil slice dan indexOf berikutnya.
  */
+
+// ==============================================================================
+// LANGKAH 2: PERBAIKI 7 KESALAHAN
+// ==============================================================================
+console.log("\n==================================================");
+console.log("        LANGKAH 2: PERBAIKI 7 KESALAHAN           ");
+console.log("==================================================");
+
+let daftarBelanja = ["Kopi", "Teh", "Roti"];
+
+// FIX 1: Mengganti unshift() menjadi push(). unshift() menambah item di awal indeks 0, sedangkan instruksi meminta menambahkan "Susu" di akhir daftar.
+// daftarBelanja.unshift("Susu"); // SALAH
+daftarBelanja.push("Susu");
+
+// FIX 2: Mengganti slice() menjadi splice(1, 1). Method slice() tidak mengubah array asli melainkan membuat salinan, sedangkan splice() memotong dan menghapus 1 elemen langsung dari array asli di indeks 1 ("Teh").
+// daftarBelanja.slice(1, 1); // SALAH
+daftarBelanja.splice(1, 1);
+
+// FIX 3: Mengganti indexOf() menjadi includes(). indexOf() mengembalikan angka indeks (1), sedangkan hasil yang diharapkan adalah nilai boolean true.
+// let adaRoti = daftarBelanja.indexOf("Roti"); // SALAH (mengembalikan 1)
+let adaRoti = daftarBelanja.includes("Roti");
+
+// FIX 4: Memperbaiki indeks off-by-one dari daftarBelanja.length menjadi daftarBelanja.length - 1, karena indeks array berbasis nol (0-indexed).
+// let terakhir = daftarBelanja[daftarBelanja.length]; // SALAH (mengembalikan undefined)
+let terakhir = daftarBelanja[daftarBelanja.length - 1];
+
+// FIX 5: Menambahkan kata kunci 'return' pada function declaration hitungDiskon agar mengembalikan nilai hasil perhitungan, bukan undefined.
+function hitungDiskon(harga, persen) {
+  // harga - (harga * persen) / 100; // SALAH (tanpa return)
+  return harga - (harga * persen) / 100;
+}
+
+// FIX 6: Menambahkan kata kunci 'return' pada arrow function dengan kurung kurawal (block body) hitungPajak.
+const hitungPajak = (subtotal) => {
+  // subtotal * 0.11; // SALAH (tanpa return)
+  return subtotal * 0.11;
+};
+
+// FIX 7: Memindahkan deklarasi arrow function hitungTotal ke sebelum baris pemanggilannya. Variabel const tidak mengalami hoisting fungsi dan berada dalam Temporal Dead Zone (TDZ), sehingga memanggil sebelum inisialisasi memicu ReferenceError.
+const hitungTotal = (subtotal, pajak) => subtotal + pajak;
+
+console.log(daftarBelanja, adaRoti, terakhir);
+console.log(hitungDiskon(100000, 20));
+console.log(hitungPajak(80000));
+console.log(hitungTotal(80000, 8800));
+
+/*
+ * ==============================================================================
+ * JAWABAN PERTANYAAN LANGKAH 2
+ * ==============================================================================
+ * 1. Ringkasan 7 Kesalahan dan Perbaikannya:
+ *    - Kesalahan 1: Menggunakan unshift() untuk menambah item akhir; perbaikannya menggunakan push().
+ *    - Kesalahan 2: Menggunakan slice() untuk menghapus elemen asli; perbaikannya menggunakan splice(1, 1).
+ *    - Kesalahan 3: Menggunakan indexOf() yang menghasilkan angka; perbaikannya menggunakan includes() agar bernilai boolean true.
+ *    - Kesalahan 4: Mengakses indeks daftarBelanja.length (out of bounds); perbaikannya menggunakan daftarBelanja.length - 1.
+ *    - Kesalahan 5: Kurang kata kunci return pada function declaration hitungDiskon; perbaikannya menambahkan return.
+ *    - Kesalahan 6: Kurang kata kunci return pada arrow function ber-kurung kurawal hitungPajak; perbaikannya menambahkan return.
+ *    - Kesalahan 7: Memanggil arrow function hitungTotal sebelum dideklarasikan; perbaikannya mendefinisikan const hitungTotal sebelum pemanggilan.
+ *
+ * 2. Klasifikasi Error vs Hasil Salah:
+ *    - Menyebabkan Error di Console (Fatal): Kesalahan 7 (ReferenceError: Cannot access 'hitungTotal' before initialization).
+ *    - Tidak Error tetapi Hasilnya Salah (Logic/Semantic): Kesalahan 1, 2, 3, 4, 5, dan 6.
+ *
+ * 3. Kenapa hitungDiskon dan hitungPajak sama-sama menghasilkan undefined?
+ *    Jawab: Di JavaScript, baik function declaration biasa maupun arrow function dengan blok kurung kurawal ({}),
+ *    jika tidak menyertakan kata kunci `return` eksplisit, secara otomatis akan mengembalikan nilai primitif `undefined`.
+ */
