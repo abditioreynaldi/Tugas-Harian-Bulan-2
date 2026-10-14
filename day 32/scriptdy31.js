@@ -201,3 +201,146 @@ console.log(hitungTotal(80000, 8800));
  *    Jawab: Di JavaScript, baik function declaration biasa maupun arrow function dengan blok kurung kurawal ({}),
  *    jika tidak menyertakan kata kunci `return` eksplisit, secara otomatis akan mengembalikan nilai primitif `undefined`.
  */
+
+// ==============================================================================
+// LANGKAH 3: BIKIN KASIR SENDIRI
+// ==============================================================================
+console.log("\n==================================================");
+console.log("        LANGKAH 3: BIKIN KASIR SENDIRI            ");
+console.log("==================================================");
+
+// Data Awal: Dua array paralel dan satu array keranjang
+const kasirNamaMenu = ["Kopi Susu", "Es Teh", "Roti Bakar", "Nasi Goreng", "Jus Jeruk"];
+const kasirHargaMenu = [18000, 7500, 15000, 22000, 12000];
+let kasirKeranjang = [];
+
+// Syarat 1: Kelola keranjang dengan array method (push, unshift, pop/shift, splice)
+// a. push untuk menambah item di belakang
+kasirKeranjang.push("Kopi Susu", "Nasi Goreng");
+
+// b. unshift untuk menambah item prioritas di depan
+kasirKeranjang.unshift("Es Teh");
+
+// c. pop untuk membatalkan item terakhir ("Nasi Goreng" dibatalkan)
+let itemBatal = kasirKeranjang.pop();
+
+// d. splice untuk mengganti item di indeks 1 ("Kopi Susu" diganti "Roti Bakar")
+kasirKeranjang.splice(1, 1, "Roti Bakar");
+
+// Tambah item lagi agar isi keranjang akhir minimal 4 item (saat ini ada 5 item)
+kasirKeranjang.push("Jus Jeruk", "Nasi Goreng", "Kopi Susu");
+
+console.log("Isi Keranjang Setelah Dikelola (minimal 4 item):", kasirKeranjang);
+console.log("Item yang sempat dibatalkan:", itemBatal);
+
+// Syarat 2: includes & slice
+let adaKopiSusu = kasirKeranjang.includes("Kopi Susu");
+let paketCepat = kasirKeranjang.slice(0, 3);
+console.log("Apakah ada 'Kopi Susu' di keranjang?", adaKopiSusu);
+console.log("Paket Cepat (3 item pertama):", paketCepat);
+
+// Syarat 3: Function pertama (function declaration) - kasirCariHarga(namaMenu)
+function kasirCariHarga(namaMenu) {
+  const indeks = kasirNamaMenu.indexOf(namaMenu);
+  if (indeks === -1) {
+    return 0; // Menu tidak ditemukan
+  }
+  return kasirHargaMenu[indeks];
+}
+
+// Syarat 4: Function kedua (function expression) - kasirHitungSubtotal
+const kasirHitungSubtotal = function (keranjang) {
+  let subtotal = 0;
+  for (let i = 0; i < keranjang.length; i++) {
+    subtotal += kasirCariHarga(keranjang[i]);
+  }
+  return subtotal;
+};
+
+// Syarat 5: Function ketiga (arrow function dengan {} dan return) - kasirHitungDiskon
+const kasirHitungDiskon = (subtotal) => {
+  if (subtotal >= 100000) {
+    return subtotal * 0.15; // Diskon 15%
+  } else if (subtotal >= 50000) {
+    return subtotal * 0.10; // Diskon 10%
+  } else if (subtotal >= 25000) {
+    return subtotal * 0.05; // Diskon 5%
+  } else {
+    return 0; // Tidak ada diskon
+  }
+};
+
+// Syarat 6: Function keempat (arrow function ringkas satu baris dengan nilai default) - kasirHitungPajak
+const kasirHitungPajak = (nilai, tarif = 0.11) => nilai * tarif;
+
+// Syarat 7 & 8: Function kelima - kasirCetakStruk
+function kasirCetakStruk(keranjang, namaSkenario) {
+  const subtotal = kasirHitungSubtotal(keranjang);
+  const diskon = kasirHitungDiskon(subtotal);
+  const subtotalSetelahDiskon = subtotal - diskon;
+  // Pajak dihitung dari subtotal setelah diskon
+  const pajak = kasirHitungPajak(subtotalSetelahDiskon);
+  const totalAkhir = subtotalSetelahDiskon + pajak;
+
+  console.log(`\n========================================`);
+  console.log(`         STRUK BELANJA WARUNG           `);
+  console.log(`      ${namaSkenario.toUpperCase()}     `);
+  console.log(`========================================`);
+  console.log(`Daftar Item Belanja:`);
+  for (let i = 0; i < keranjang.length; i++) {
+    const item = keranjang[i];
+    const harga = kasirCariHarga(item);
+    console.log(`  ${i + 1}. ${item.padEnd(16)} : Rp ${harga.toLocaleString("id-ID")}`);
+  }
+  console.log(`----------------------------------------`);
+  console.log(`Subtotal        : Rp ${subtotal.toLocaleString("id-ID")}`);
+  console.log(`Diskon Belanja  : Rp ${diskon.toLocaleString("id-ID")}`);
+  console.log(`Pajak (11%)     : Rp ${pajak.toLocaleString("id-ID")}`);
+  console.log(`----------------------------------------`);
+  console.log(`Total Akhir     : Rp ${totalAkhir.toLocaleString("id-ID")}`);
+  console.log(`========================================`);
+}
+
+// Syarat 9: Uji 2 Skenario Berbeda
+console.log("\n--- UJI 2 SKENARIO KASIR ---");
+
+// Skenario 1: Belanja besar di atas 100rb (Diskon 15%)
+const skenario1Keranjang = [
+  "Nasi Goreng",
+  "Nasi Goreng",
+  "Kopi Susu",
+  "Roti Bakar",
+  "Roti Bakar",
+  "Jus Jeruk"
+];
+kasirCetakStruk(skenario1Keranjang, "Skenario 1 (Belanja Besar - Diskon 15%)");
+
+// Skenario 2: Belanja sedang di atas 50rb (Diskon 10%)
+const skenario2Keranjang = [
+  "Kopi Susu",
+  "Roti Bakar",
+  "Nasi Goreng",
+  "Es Teh"
+];
+kasirCetakStruk(skenario2Keranjang, "Skenario 2 (Belanja Sedang - Diskon 10%)");
+
+/*
+ * ==============================================================================
+ * DOKUMENTASI HASIL 2 SKENARIO
+ * ==============================================================================
+ * Skenario 1:
+ * keranjang berisi ["Nasi Goreng", "Nasi Goreng", "Kopi Susu", "Roti Bakar", "Roti Bakar", "Jus Jeruk"]
+ * Hasil:
+ * Subtotal: Rp 104.000
+ * Diskon  : Rp 15.600 (15%)
+ * Pajak   : Rp 9.724 (11% dari Rp 88.400)
+ * Total   : Rp 98.124
+ *
+ * Skenario 2:
+ * keranjang berisi ["Kopi Susu", "Roti Bakar", "Nasi Goreng", "Es Teh"]
+ * Hasil:
+ * Subtotal: Rp 62.500
+ * Diskon  : Rp 6.250 (10%)
+ * Pajak   : Rp 6.187,5 (11% dari Rp 56.250)
+ * Total   : Rp 62.437,5
+ */
