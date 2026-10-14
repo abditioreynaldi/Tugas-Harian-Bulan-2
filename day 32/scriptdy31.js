@@ -427,3 +427,5 @@ console.log("Membatalkan 'Pizza' (tidak ada di keranjang):", hasilBatal2);
  * - Tidak ada item yang dihapus.
  * - Fungsi mengembalikan nilai: false.
  */
+
+//
