@@ -185,3 +185,166 @@ Jawaban Pertanyaan Langkah 2:
 2. Kesalahan yang menyebabkan error: 3 (SyntaxError), 6 (TypeError), 7 (TypeError). Kesalahan hasilnya salah: 1, 2, 4, 5.[cite: 1]
 3. `akun.kataSandi = undefined` hanya mengubah nilainya, properti tetap ada (`"kataSandi" in akun` bernilai true). `delete akun.kataSandi` menghilangkan properti sepenuhnya (`"kataSandi" in akun` bernilai false).[cite: 1]
 */
+// ==========================================
+// LANGKAH 3 & BONUS: BIKIN KASIR SENDIRI
+// ==========================================
+
+const kasirKedai = {
+  nama: "Kedai Senja",
+  kota: "Yogyakarta",
+  saldoKas: 0,
+  jamOperasional: { buka: "08:00", tutup: "21:00" },
+  menu: [
+    { nama: "Kopi Susu", kategori: "minuman", harga: 18000, stok: 10 },
+    { nama: "Roti Bakar", kategori: "makanan", harga: 15000, stok: 3 },
+    { nama: "Es Teh", kategori: "minuman", harga: 5000, stok: 20 },
+    { nama: "Mie Rebus", kategori: "makanan", harga: 12000, stok: 15 },
+    { nama: "Kopi Hitam", kategori: "minuman", harga: 10000, stok: 8 }
+  ],
+  keranjang: [],
+
+  cariHarga(namaMenu) {
+    for (let item of this.menu) {
+      if (item.nama === namaMenu) return item.harga;
+    }
+    return 0;
+  },
+
+  tambahKeKeranjang(namaMenu, jumlah) {
+    for (let item of this.menu) {
+      if (item.nama === namaMenu && item.stok >= jumlah) {
+        this.keranjang.push({ nama: namaMenu, jumlah: jumlah });
+        item.stok -= jumlah;
+        return true;
+      }
+    }
+    return false;
+  },
+
+  hitungSubtotal() {
+    let subtotal = 0;
+    for (let item of this.keranjang) {
+      subtotal += this.cariHarga(item.nama) * item.jumlah;
+    }
+    return subtotal;
+  },
+
+  hitungDiskon(subtotal) {
+    if (subtotal >= 100000) return subtotal * 0.15;
+    if (subtotal >= 50000) return subtotal * 0.10;
+    if (subtotal >= 25000) return subtotal * 0.05;
+    return 0;
+  },
+
+  cetakStruk() {
+    console.log(`\n=== STRUK ${this.nama.toUpperCase()} ===`);
+    let subtotal = this.hitungSubtotal();
+    let diskon = this.hitungDiskon(subtotal);
+    let dpp = subtotal - diskon; // Dasar Pengenaan Pajak
+    let pajak = dpp * 0.11;
+    let total = dpp + pajak;
+
+    let nomor = 1;
+    for (let item of this.keranjang) {
+      let hargaSatuan = this.cariHarga(item.nama);
+      console.log(`${nomor++}. ${item.nama} (x${item.jumlah}) - Rp${hargaSatuan * item.jumlah}`);
+    }
+    
+    console.log("----------------------");
+    console.log(`Subtotal : Rp${subtotal}`);
+    console.log(`Diskon   : Rp${diskon}`);
+    console.log(`Pajak 11%: Rp${pajak}`);
+    console.log(`Total    : Rp${total}`);
+    
+    this.saldoKas += total;
+    this.keranjang = []; // Kosongkan keranjang setelah struk dicetak
+  },
+
+  // BONUS: menuMenipis
+  menuMenipis() {
+    let menipis = [];
+    for (let item of this.menu) {
+      if (item.stok < 5) menipis.push(item.nama);
+    }
+    return menipis;
+  }
+};
+
+// 7. Properti dinamis[cite: 1]
+let webKey = "website";
+kasirKedai[webKey] = "www.kedaisenja.com";
+console.log(`Ada properti website? ${webKey in kasirKedai}`); // true
+console.log(kasirKedai[webKey]);
+delete kasirKedai[webKey];
+console.log(`Ada properti website setelah dihapus? ${webKey in kasirKedai}`); // false
+
+// 8. for...in[cite: 1]
+console.log("\n--- Jam Operasional ---");
+for (let key in kasirKedai.jamOperasional) {
+  console.log(`${key}: ${kasirKedai.jamOperasional[key]}`);
+}
+
+console.log("\n--- Info Menu Pertama ---");
+for (let key in kasirKedai.menu[0]) {
+  console.log(`${key}: ${kasirKedai.menu[0][key]}`);
+}
+
+// 9. Object.keys dan Object.values[cite: 1]
+console.log("\nKeys Jam:", Object.keys(kasirKedai.jamOperasional));
+console.log("Values Jam:", Object.values(kasirKedai.jamOperasional));
+
+// 10. Hitung huruf 'a'[cite: 1]
+let jumlahA = 0;
+for (let char of kasirKedai.nama) {
+  if (char === 'a') jumlahA++;
+}
+console.log(`\nJumlah huruf 'a' pada nama kedai: ${jumlahA}`);
+
+// 11. Uji Skenario[cite: 1]
+
+// Kegagalan 1: Menu tidak ada
+let gagal1 = kasirKedai.tambahKeKeranjang("Ayam Goreng", 1);
+console.log(`Tambah menu tidak ada: ${gagal1}`); // false
+
+// Kegagalan 2: Stok kurang
+let gagal2 = kasirKedai.tambahKeKeranjang("Roti Bakar", 5);
+console.log(`Tambah menu lebih dari stok: ${gagal2}`); // false
+
+// Skenario 1: Belanja lebih dari 50000 (Diskon 10%)
+kasirKedai.tambahKeKeranjang("Kopi Susu", 2);  // 36000
+kasirKedai.tambahKeKeranjang("Roti Bakar", 1); // 15000
+kasirKedai.cetakStruk();
+// Hasil struk skenario 1:
+// 1. Kopi Susu (x2) - Rp36000
+// 2. Roti Bakar (x1) - Rp15000
+// Subtotal : Rp51000
+// Diskon   : Rp5100
+// Pajak 11%: Rp5049
+// Total    : Rp50949
+
+// Skenario 2: Belanja lebih dari 100000 (Diskon 15%)
+kasirKedai.tambahKeKeranjang("Mie Rebus", 10); // 120000
+kasirKedai.tambahKeKeranjang("Es Teh", 2);     // 10000
+kasirKedai.cetakStruk();
+// Hasil struk skenario 2:
+// 1. Mie Rebus (x10) - Rp120000
+// 2. Es Teh (x2) - Rp10000
+// Subtotal : Rp130000
+// Diskon   : Rp19500
+// Pajak 11%: Rp12155
+// Total    : Rp122655
+
+// Uji Bonus
+console.log("\nMenu yang stoknya menipis:", kasirKedai.menuMenipis());
+// Hasilnya berbeda karena Roti Bakar (sisa 2) dan Mie Rebus (sisa 5) berkurang akibat skenario 1 dan 2.
+
+/*
+Jawaban Pertanyaan Langkah 3:
+1. Dot notation dipakai saat nama properti diketahui dan paten (contoh: `this.nama`). Bracket notation wajib dipakai saat nama properti bersifat dinamis dari sebuah variabel atau string berspasi (contoh: `kasirKedai[webKey]`).[cite: 1]
+2. Harus menggunakan `this.saldoKas` agar scope-nya mengarah ke properti di dalam object tersebut. Jika tanpa `this`, program akan mencari variabel global `saldoKas` dan menyebabkan `ReferenceError: saldoKas is not defined`.[cite: 1]
+// PERCOBAAN: hitungSubtotal() { saldoKas += 10; } -> ReferenceError
+3. `for...of` dipakai untuk mengambil elemen aktual dalam iterabel seperti array (contoh: loop `this.keranjang`), sedangkan `for...in` dipakai untuk mengambil nama kunci/properti dari object (contoh: loop `jamOperasional`). Keduanya tidak bisa ditukar pada tipe data yang salah.[cite: 1]
+4. Object literal tidak memiliki iterator bawaan. Error: `TypeError: kasirKedai is not iterable`.[cite: 1]
+5. `Object.keys` menghasilkan array berisi nama-nama properti (contoh: `['buka', 'tutup']`), sedangkan `Object.values` menghasilkan array nilainya (contoh: `['08:00', '21:00']`).[cite: 1]
+6. `cariHarga` dan `hitungSubtotal` harus me-return nilai agar bisa digunakan oleh method lain sebagai bahan kalkulasi. `cetakStruk` hanya menampilkan data sehingga tidak wajib me-return. Jika `hitungSubtotal` hanya `console.log`, total struk akan bernilai NaN karena tidak ada angka yang diproses lebih lanjut.[cite: 1]
+*/
