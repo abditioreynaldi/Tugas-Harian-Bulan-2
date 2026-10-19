@@ -309,3 +309,31 @@ console.log("Test Shadowing (Global):", nilaiRahasia);
 5. `cetakJudul()` (function declaration) di-hoisting seutuhnya ke bagian paling atas kode, jadi sudah siap dieksekusi[cite: 2]. Kalau diubah pakai const (function expression), kita mendapat pesan error karena `const` dikenai TDZ (Temporal Dead Zone) dan tidak meng-hoist nilai fungsinya.
 6. Function arrow (closure) menyimpan referensi scope (lexical environment) tempat ia diciptakan, di mana parameter `persen` berada[cite: 2].
 */
+
+// ==========================================
+// BONUS (Opsional)
+// ==========================================
+
+/*
+Tebakan:
+- fungsiLet akan mencetak: 0 1 2
+- fungsiVar akan mencetak: 3 3 3
+*/
+
+const fungsiLet = [];
+for (let i = 0; i < 3; i++) {
+  fungsiLet.push(() => i);
+}
+console.log(fungsiLet[0](), fungsiLet[1](), fungsiLet[2]()); // Asli: 0 1 2
+
+const fungsiVar = [];
+for (var j = 0; j < 3; j++) {
+  fungsiVar.push(() => j);
+}
+console.log(fungsiVar[0](), fungsiVar[1](), fungsiVar[2]()); // Asli: 3 3 3
+
+/* 
+Penjelasan Perbedaan:
+`let` bersifat block-scoped. Setiap loop menciptakan scope `{}` baru yang secara independen 'mengunci' memori nilai `i` saat iterasi tersebut terjadi[cite: 2].
+Sebaliknya, `var` adalah function-scoped (dalam hal ini global). Jadi semua loop berbagi satu variabel memori yang sama bernama `j`[cite: 2]. Saat perulangan var selesai (`j = 3`), semua array function menunjuk pada alamat variabel yang sama tersebut, sehingga semuanya menge-print "3".
+*/
