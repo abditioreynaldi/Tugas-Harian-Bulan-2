@@ -193,3 +193,119 @@ console.log(dompet.cekSaldo());
 3. Karena `let saldoKas = 0;` mendeklarasikan variabel baru di scope lokal (shadowing), mengisolasi perubahan dari variabel global di luarnya[cite: 2]. Istilahnya: Variable Shadowing.
 4. Karena `this.saldo` mencari properti bernama `saldo` *di dalam object* return, padahal `saldo` adalah *variabel lokal* dari fungsi `buatDompet`, bukan properti object tersebut[cite: 2].
 */
+
+// ==========================================
+// LANGKAH 3: BIKIN KASIR SENDIRI
+// ==========================================
+
+const NAMA_WARUNG = "Kedai Senja Kita";
+const TARIF_PAJAK = 0.11;
+
+cetakJudul(); // Panggil di atas deklarasi
+
+function cetakJudul() {
+  console.log(NAMA_WARUNG.toUpperCase());
+}
+
+// Percobaan function expression cetakJudul2 sebelum deklarasi:
+// cetakJudul2(); 
+// const cetakJudul2 = () => console.log("ERROR PASTI");
+// HASIL: ReferenceError: Cannot access 'cetakJudul2' before initialization
+
+function buatKasir(namaKasir, modalAwal) {
+  let saldoKas = modalAwal;
+  let jumlahTransaksi = 0;
+  let riwayat = [];
+
+  return {
+    catatPenjualan(namaMenu, harga, jumlah) {
+      const subtotal = harga * jumlah;
+      const pajak = subtotal * TARIF_PAJAK;
+      const total = subtotal + pajak;
+      
+      saldoKas += total;
+      jumlahTransaksi++;
+      riwayat.push({ namaMenu, jumlah, total });
+      
+      return total;
+    },
+    ambilKas(jumlah) {
+      if (jumlah > saldoKas) return false;
+      saldoKas -= jumlah;
+      return true;
+    },
+    cekSaldo() {
+      return saldoKas;
+    },
+    lihatRiwayat() {
+      return riwayat.slice(); // Salinan array
+    },
+    ringkasan() {
+      console.log(`Kasir: ${namaKasir} | Total Trx: ${jumlahTransaksi} | Saldo: ${saldoKas}`);
+    }
+  };
+}
+
+const kasirPagi = buatKasir("Rina", 100000);
+const kasirMalam = buatKasir("Dodi", 50000);
+
+// Transaksi Pagi
+kasirPagi.catatPenjualan("Ayam Bakar", 25000, 2);
+kasirPagi.catatPenjualan("Es Teh", 5000, 3);
+kasirPagi.catatPenjualan("Soto Ayam", 15000, 1);
+
+// Transaksi Malam
+kasirMalam.catatPenjualan("Nasi Goreng", 20000, 2);
+kasirMalam.catatPenjualan("Mie Kuah", 18000, 1);
+
+// Ambil Kas
+console.log("Kasir Pagi Ambil Kas 500rb:", kasirPagi.ambilKas(500000)); // gagal
+console.log("Kasir Pagi Ambil Kas 50rb:", kasirPagi.ambilKas(50000)); // berhasil
+
+kasirPagi.ringkasan();
+kasirMalam.ringkasan();
+
+// Bukti Data Privat
+console.log("kasirPagi.saldoKas langsung:", kasirPagi.saldoKas); 
+kasirPagi.saldoKas = 999999; 
+console.log("cekSaldo setelah diubah lewat properti:", kasirPagi.cekSaldo());
+// Hasil data privat: kasirPagi.saldoKas mengembalikan 'undefined'. 
+// Saat kita meng-assign 999999, itu hanya membuat properti publik baru bernama saldoKas di object, 
+// tetapi fungsi cekSaldo() tetap memanggil let saldoKas privat yang dilindungi closure.
+
+// Bukti Salinan Riwayat
+const riwayatCopy = kasirPagi.lihatRiwayat();
+riwayatCopy.push({ namaMenu: "Ilegal", jumlah: 99, total: 0 });
+console.log("Panjang copy yg diedit:", riwayatCopy.length);
+console.log("Panjang riwayat asli:", kasirPagi.lihatRiwayat().length);
+// Hasil Salinan: Panjang copy yg diedit = 4, sedangkan riwayat asli = 3. Array orisinal tetap aman.
+
+// Penghitung Diskon (Closure Arrow Function)
+function buatPenghitungDiskon(persen) {
+  return (harga) => harga - (harga * persen / 100);
+}
+
+const diskon10 = buatPenghitungDiskon(10);
+const diskon25 = buatPenghitungDiskon(25);
+
+console.log("Diskon 10% dari 80000:", diskon10(80000));
+console.log("Diskon 25% dari 80000:", diskon25(80000));
+
+// Variabel Shadowing
+const nilaiRahasia = "Global Secret";
+function testShadowing() {
+  const nilaiRahasia = "Lokal Secret";
+  console.log("Test Shadowing (Lokal):", nilaiRahasia);
+}
+testShadowing();
+console.log("Test Shadowing (Global):", nilaiRahasia);
+// Hasil Shadowing: Test Lokal mencetak "Lokal Secret", dan Test Global mencetak "Global Secret" karena variabel lokal menutupi variabel global ber-nama sama tanpa mengubahnya.
+
+/* Jawaban Pertanyaan Langkah 3:
+1. Menghasilkan `undefined` karena `saldoKas` dideklarasikan memakai `let` di dalam fungsi, bukan sebagai `this.saldoKas` dari object return[cite: 2]. Hubungannya dengan closure adalah fungsi method di dalam object masih bisa mengingat dan memanipulasi variabel tersebut, tanpa mengeksposnya ke luar.
+2. Karena setiap kali kita memanggil `buatKasir()`, ia menciptakan execution context dan memori environment (scope) yang baru dan benar-benar terpisah untuk tiap kasir[cite: 2].
+3. `saldoKas`, `jumlahTransaksi`, dan `riwayat` terus "diingat" karena ada method di dalam object return yang mereferensikan mereka (Closure)[cite: 2]. JS tidak akan menghapus memori itu (garbage collection) selama object kembaliannya masih aktif dipakai.
+4. Karena JavaScript akan mencari variabel di scope asalnya, lalu naik ke scope luarnya terus menerus hingga mencapai Global Scope; mekanisme ini bernama Scope Chain[cite: 2].
+5. `cetakJudul()` (function declaration) di-hoisting seutuhnya ke bagian paling atas kode, jadi sudah siap dieksekusi[cite: 2]. Kalau diubah pakai const (function expression), kita mendapat pesan error karena `const` dikenai TDZ (Temporal Dead Zone) dan tidak meng-hoist nilai fungsinya.
+6. Function arrow (closure) menyimpan referensi scope (lexical environment) tempat ia diciptakan, di mana parameter `persen` berada[cite: 2].
+*/
